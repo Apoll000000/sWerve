@@ -1,0 +1,16 @@
+.hero {
+    width: 100%;
+    height: auto;
+}
+
+.slide1 {
+    background: linear-gradient(to bottom, rgba(1, 88, 150, 0.548), rgba(1, 121, 71, 0.623)),
+        url('/public/service1.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.car-but {
+    background-color: rgb(15, 205, 243);
+    color: white;
+}
