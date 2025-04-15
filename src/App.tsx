@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Landingpage from './components/landing';
-import { Separator } from "@/components/ui/separator"
+import { supabase } from './lib/supabase';
+
 
 import {
   Avatar,
@@ -33,7 +34,8 @@ import {
   InstagramIcon,
   LinkedinIcon,
   XIcon,
-  GithubIcon
+  GithubIcon,
+  SquareUserRound
 } from "lucide-react"
 
 import {
@@ -50,10 +52,39 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import Landing from './components/landing';
+
+import { LoginForm } from './components/login-form';
+import AuthCallback from './utils/AuthCallback';
+import { Session } from '@supabase/supabase-js'
+import { signOut } from './utils/auth';
+import Profile from './components/profile';
+import NotFound from './components/NotFound';
+import CategoryPage from './components/CategoryPage';
+import Dashboard from './components/Dashboard';
+
+
 
 function App() {
+  const [session, setSession] = useState<Session | null>(null);
 
+  useEffect(() => {
+    // Fetch session on load
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession()
+      setSession(data.session)
+    }
+
+    getSession()
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   return (
     <>
@@ -85,131 +116,129 @@ function App() {
               </Link>
             </h3>
 
-            <h3>
+            {/* <h3>
               <Link to="/">
                 <Button>Become a sWerver</Button>
               </Link>
-            </h3>
+            </h3> */}
           </div>
 
           <div className="icons">
-            <ShoppingBag />
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Avatar className="avatar">
-                  <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 mr-10">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <User />
-                    <span>Profile</span>
-                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <CreditCard />
-                    <span>Billing</span>
-                    <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings />
-                    <span>Settings</span>
-                    <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Keyboard />
-                    <span>Keyboard shortcuts</span>
-                    <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <Users />
-                    <span>Team</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                      <UserPlus />
-                      <span>Invite users</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuItem>
-                          <Mail />
-                          <span>Email</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <MessageSquare />
-                          <span>Message</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <PlusCircle />
-                          <span>More...</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                  <DropdownMenuItem>
-                    <Plus />
-                    <span>New Team</span>
-                    <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Github />
-                  <span>GitHub</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <LifeBuoy />
-                  <span>Support</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem disabled>
-                  <Cloud />
-                  <span>API</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <LogOut />
-                  <span>Log out</span>
-                  <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {session ?
+              <div className='flex gap-3 justify-center items-center'>
+                <ShoppingBag />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Avatar className="avatar">
+                      <AvatarImage src={session.user.user_metadata.avatar_url} alt="@shadcn" />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56 mr-10">
+                    <DropdownMenuLabel>Hello <b>{session.user.user_metadata.full_name}</b>!</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem asChild>
+                        <Link to="/Profile">
+                          <User />
+                          <span>Profile</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/Dashboard">
+                          <SquareUserRound />
+                          <span>sWerver Dashboard</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <CreditCard />
+                        <span>Billing & Addresses</span>
+
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Settings />
+                        <span>Settings</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem>
+                        <Users />
+                        <span>Team</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                          <UserPlus />
+                          <span>Invite users</span>
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent>
+                            <DropdownMenuItem>
+                              <Mail />
+                              <span>Email</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <MessageSquare />
+                              <span>Message</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <PlusCircle />
+                              <span>More...</span>
+                            </DropdownMenuItem>
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
+                      <DropdownMenuItem>
+                        <Plus />
+                        <span>New Team</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <LifeBuoy />
+                      <span>Support</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled>
+                      <Cloud />
+                      <span>API</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={signOut}>
+                      <LogOut />
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              :
+
+              <Link to="/Login">
+                <Button>Become a sWerver</Button>
+              </Link>
+            }
+
           </div>
 
         </div>
       </nav>
 
-      <main>  
-          <Landingpage />
-      </main>
-
-      <footer className="bg-white w-full px-8">
-          <Separator />
-          <div className="w-full flex flex-col items-center gap-4 md:flex-row md:justify-between py-8 text-[#8c8c8c] text-lg">
-              <p className="">Ⓒ sWerve Philippines. 2025</p>
-              <div className="socials flex gap-5">
-                <FacebookIcon className='cursor-pointer' color="#8c8c8c"/>
-                <InstagramIcon className='cursor-pointer' color="#8c8c8c"/>
-                <XIcon className='cursor-pointer' color="#8c8c8c"/>
-                <LinkedinIcon className='cursor-pointer' color="#8c8c8c"/>
-                <GithubIcon className='cursor-pointer' color="#8c8c8c"/>
-              </div>
-          </div>
-      </footer>
-
+      
 
       <Routes>
-        {/* <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/" element={<Navigate to="/home" />} />
+
+        <Route path="/home" element={<Landingpage />} />
+        <Route path="/Login" element={<LoginForm />} />
+        <Route path="/category-page" element={<CategoryPage />} />
+        <Route path="/Profile" element={<Profile session={session} />} />
+        <Route path="/Dashboard" element={<Dashboard session={session} />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+
+        <Route path="*" element={<NotFound />} />
+        {/* <Route path="/about" element={<About />} />
         <Route path="*" element={<NotFound />} /> */}
       </Routes>
 
