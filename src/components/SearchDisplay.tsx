@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 
+
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -51,59 +52,57 @@ type Service = {
     };
 };
 
-const CategoryPage = () => {
+const SearchDisplay = () => {
     const location = useLocation();
-    const { category } = location.state; // Default to null if no state passed
-    const [services, setServices] = useState<Service[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 12; // Customize as needed
+    const itemsPerPage = 8; // Customize as needed
 
-    const categoryMap: { [key: string]: string } = {
-        "Professional Consultation (Medical, Law & Others)": "Professional Consultation",
-        "Handyworks (Plumbing, Electrical, Carpentry, etc.)": "Handyworks",
-        "Automotives Repair, Maintenance & Other Mechanical Services": "Automotives & Mechanical",
-        "Writing, Proofreading, Translation, etc.": "Writing & Translation",
-        "Programming & Web Development Services": "Programming & Web Dev",
-        "Computer & Other Tech Repairs": "Computer & Tech Repair",
-        "Architectural Services, Building Design, Interior Designs, etc.": "Architectural & Designs",
-        "Engineering & Other Construction Services": "Engineering & Construction",
-        "Photography, Filming, Editing & Other Multimedia Services": "Photography & Multimedia Services",
-        "Music Production, Band Performance, Studio Rentals, etc.": "Music Production & Others",
-        "Business Consultation, Marketing & Others": "Business & Marketing",
-        // Add more if needed
-    };
+    const searchParams = new URLSearchParams(location.search);
+    const term = searchParams.get("term") || "";
 
-    const normalizedCategory = categoryMap[category] || category;
+    const [results, setResults] = useState<Service[]>([]);
 
-    const paginatedServices = services.slice(
+    const paginatedServices = results.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
 
-    const totalPages = Math.ceil(services.length / itemsPerPage);
-
-    async function fetchCategoryServices() {
-        const { data, error } = await supabase
-            .from("services")
-            .select(`
-                *,
-                profiles (
-                    full_name
-                )
-            `)
-            .eq("category", normalizedCategory);
-
-        if (error) {
-            console.error("Error fetching category services:", error);
-            return;
-        }
-
-        setServices(data);
-    }
+    const totalPages = Math.ceil(results.length / itemsPerPage);
 
     useEffect(() => {
-        fetchCategoryServices();
-    });
+        if (!term) return;
+
+        const fetchServices = async () => {
+            const { data, error } = await supabase
+                .from("services")
+                .select(`
+                    *,
+                    profiles (
+                        full_name
+                    )
+                `); // This joins the profiles table on profiles_id
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            // Filter results manually
+            const filtered = data?.filter((service) => {
+                const lowerTerm = term.toLowerCase();
+                return (
+                    service.service_name?.toLowerCase().includes(lowerTerm) ||
+                    service.service_description?.toLowerCase().includes(lowerTerm) ||
+                    service.category?.toLowerCase().includes(lowerTerm) ||
+                    service.profiles?.full_name?.toLowerCase().includes(lowerTerm)
+                );
+            });
+
+            setResults(filtered || []);
+        };
+
+        fetchServices();
+    }, [term]);
 
     return (
         <>
@@ -116,18 +115,14 @@ const CategoryPage = () => {
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/home">Categories</BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
-                            <BreadcrumbPage>{category}</BreadcrumbPage>
+                            <BreadcrumbLink href="">Results for "{term}"</BreadcrumbLink>
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
             </section>
 
             <section className="happen p-5 xl:pl-50 xl:pr-50 pb-20 mt-10">
-                <h1 className="max-sm:text-3xl sm:text-3xl lg:text-5xl font-[600] leading-none">sWerve Services</h1>
+                <h1 className="max-sm:text-3xl sm:text-3xl lg:text-5xl font-[600] leading-none">Results for "{term}"</h1>
                 <div className="p-2 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pt-5">
                     {paginatedServices.map((service) => (
                         <Link to={`/services/${service.service_id}`} key={service.service_id}>
@@ -204,4 +199,4 @@ const CategoryPage = () => {
     );
 };
 
-export default CategoryPage
+export default SearchDisplay

@@ -7,7 +7,7 @@ function Pro() {
             <section className="pro p-5 xl:pl-50 xl:pr-50 mt-10">
                 <div className="lg:flex md:flex md:items-center bg-[#acf3e5] w-full p-8 lg:pl-15 lg:pr-15 rounded-3xl">
                     <div className="pro-writings w-full md:w-[60%]">
-                        <img src="/" alt="LOGO" className="logo" />
+                        <img src="./sWerve Temp Logo.png" alt="LOGO" className="logo w-[100px] h-[100px]" />
                         <h1 className="text-4xl lg:text-[3vw] leading-none font-[700]">The <span className="text-green-800">premium service</span> solution for hiring freelancers and bagging clients</h1>
                         <div className="adv p-2 grid grid-cols-1 lg:grid-cols-2 gap-3">
                             <div className="con pt-2">

@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Landingpage from './components/landing';
 import { supabase } from './lib/supabase';
+import ServicePage from './components/ServicePage';
+import SearchDisplay from './components/SearchDisplay';
+import { Toaster } from 'sonner';
 
+import { useNavigate } from "react-router-dom";
 
 import {
   Avatar,
@@ -61,11 +65,23 @@ import Profile from './components/profile';
 import NotFound from './components/NotFound';
 import CategoryPage from './components/CategoryPage';
 import Dashboard from './components/Dashboard';
+import GeneralPage from './components/GeneralPage';
 
 
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
+  const [data, setData] = useState();
+  const [joinedDate, setJoinedDate] = useState<string>("");
+  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (query.trim()) {
+      navigate(`/searchresults?term=${encodeURIComponent(query.trim())}`);
+    }
+  };
 
   useEffect(() => {
     // Fetch session on load
@@ -86,26 +102,69 @@ function App() {
     return () => subscription.unsubscribe()
   }, [])
 
+  async function getProfile() {
+
+    if (session) {
+      // Extract the user ID from the session metadata
+      const userId = session.user.id;
+
+      // Query the `profiles` table to get the profile based on the user ID
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId) // Assuming user_id is the foreign key in the `profiles` table
+        .single(); // Assuming there is only one profile per user
+
+      if (error) {
+        console.error("Error fetching profile:", error);
+        return;
+      }
+
+      console.log("Profile data:", data);
+      setData(data); // This is the user's profile
+    } else {
+      console.log('User is not logged in.');
+      return null;
+    }
+  }
+
+  // Call the function to fetch the profile
+  useEffect(() => {
+    getProfile();
+  }, [session]);
+
   return (
     <>
       <nav className='shadow bg-white'>
         <div className="sep1">
           <div className="logo">
-            <img src="" alt="sWerve" />
+            <Link to='/Home'>
+              <img src="./sWerve Temp Logo.png" alt="LOGO" className="logo w-[50px] h-[50px]" />
+            </Link>
+
           </div>
 
-          <div className="searchbar">
+          <form onSubmit={handleSearch} className="searchbar pl-2">
             <div className="flex w-full items-center space-x-2">
-              <Input type="email" placeholder="What kind of service do you need?" />
-              <SearchIcon />
+              <Input
+                type="text"
+                placeholder="What kind of service do you need?"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <button type="submit">
+                <SearchIcon />
+              </button>
             </div>
-          </div>
+          </form>
+
+
         </div>
 
         <div className="sep2">
           <div className="links">
             <h3>
-              <Link to="/">
+              <Link to="/general">
                 Explore
               </Link>
             </h3>
@@ -131,12 +190,12 @@ function App() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Avatar className="avatar">
-                      <AvatarImage src={session.user.user_metadata.avatar_url} alt="@shadcn" />
+                      <AvatarImage src={data?.avatar_url} alt="@shadcn" />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56 mr-10">
-                    <DropdownMenuLabel>Hello <b>{session.user.user_metadata.full_name}</b>!</DropdownMenuLabel>
+                    <DropdownMenuLabel>Hello <b>{data?.full_name}</b>!</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                       <DropdownMenuItem asChild>
@@ -224,18 +283,23 @@ function App() {
 
         </div>
       </nav>
+      <Toaster richColors position="top-center" />
 
-      
+
 
       <Routes>
         <Route path="/" element={<Navigate to="/home" />} />
 
         <Route path="/home" element={<Landingpage />} />
         <Route path="/Login" element={<LoginForm />} />
+        <Route path="/general" element={<GeneralPage />} />
         <Route path="/category-page" element={<CategoryPage />} />
         <Route path="/Profile" element={<Profile session={session} />} />
         <Route path="/Dashboard" element={<Dashboard session={session} />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/services" element={<GeneralPage />} />
+        <Route path="/services/:id" element={<ServicePage />} />
+        <Route path="/searchresults" element={<SearchDisplay />} />
 
         <Route path="*" element={<NotFound />} />
         {/* <Route path="/about" element={<About />} />

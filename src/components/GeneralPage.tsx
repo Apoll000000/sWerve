@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -51,29 +50,10 @@ type Service = {
     };
 };
 
-const CategoryPage = () => {
-    const location = useLocation();
-    const { category } = location.state; // Default to null if no state passed
+const GeneralPage = () => {
     const [services, setServices] = useState<Service[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 12; // Customize as needed
-
-    const categoryMap: { [key: string]: string } = {
-        "Professional Consultation (Medical, Law & Others)": "Professional Consultation",
-        "Handyworks (Plumbing, Electrical, Carpentry, etc.)": "Handyworks",
-        "Automotives Repair, Maintenance & Other Mechanical Services": "Automotives & Mechanical",
-        "Writing, Proofreading, Translation, etc.": "Writing & Translation",
-        "Programming & Web Development Services": "Programming & Web Dev",
-        "Computer & Other Tech Repairs": "Computer & Tech Repair",
-        "Architectural Services, Building Design, Interior Designs, etc.": "Architectural & Designs",
-        "Engineering & Other Construction Services": "Engineering & Construction",
-        "Photography, Filming, Editing & Other Multimedia Services": "Photography & Multimedia Services",
-        "Music Production, Band Performance, Studio Rentals, etc.": "Music Production & Others",
-        "Business Consultation, Marketing & Others": "Business & Marketing",
-        // Add more if needed
-    };
-
-    const normalizedCategory = categoryMap[category] || category;
+    const itemsPerPage = 8; // Customize as needed
 
     const paginatedServices = services.slice(
         (currentPage - 1) * itemsPerPage,
@@ -82,32 +62,36 @@ const CategoryPage = () => {
 
     const totalPages = Math.ceil(services.length / itemsPerPage);
 
-    async function fetchCategoryServices() {
+    async function getServices() {
+
         const { data, error } = await supabase
-            .from("services")
+            .from('services')
             .select(`
-                *,
-                profiles (
-                    full_name
-                )
-            `)
-            .eq("category", normalizedCategory);
+          *,
+          profiles (
+            full_name
+          )
+        `);
 
         if (error) {
-            console.error("Error fetching category services:", error);
+            console.error("Error fetching services:", error);
             return;
         }
 
-        setServices(data);
+        console.log("Active Services:", data);
+        setServices(data); // Note: changed from `setService` to plural
+
     }
 
+
+    // Call the function to fetch the profile
     useEffect(() => {
-        fetchCategoryServices();
+        getServices();
     });
+
 
     return (
         <>
-
             <section className="pt-20 p-5 xl:pl-50 xl:pr-50">
                 <Breadcrumb className="w-full">
                     <BreadcrumbList>
@@ -116,11 +100,7 @@ const CategoryPage = () => {
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
                         <BreadcrumbItem>
-                            <BreadcrumbLink href="/home">Categories</BreadcrumbLink>
-                        </BreadcrumbItem>
-                        <BreadcrumbSeparator />
-                        <BreadcrumbItem>
-                            <BreadcrumbPage>{category}</BreadcrumbPage>
+                            <BreadcrumbLink href="/home">All Services</BreadcrumbLink>
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
@@ -199,9 +179,7 @@ const CategoryPage = () => {
             </section>
         </>
 
-
-
     );
 };
 
-export default CategoryPage
+export default GeneralPage

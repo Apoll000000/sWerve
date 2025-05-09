@@ -19,7 +19,7 @@ const images = [
     "https://hssphilippines.com/wp-content/uploads/2024/01/Construction-Site-Safety-1920p.jpg",
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIVby05P5ivSgfO9jB3PMQOGBMARooZXGf2A&s",
     "https://admin.12grids.com/uploads/blogs/original_cover_images/Webp/Top_11_Web_Development_Technologies_You_Must_Know_In_2024_12Grids-compressed.webp",
-    "https://blog.openclassrooms.com/en/wp-content/uploads/sites/4/2018/03/web-develoment.jpg",
+    "https://careertraining.mcneese.edu/common/images/2/20377/pro-consulting-practice-935x572.jpg",
 ];
 
 const Gallery = () => {

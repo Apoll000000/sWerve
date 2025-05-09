@@ -6,8 +6,36 @@ import {
 
 } from "lucide-react"
 import { Button } from "./ui/button"
+import { Link } from "react-router-dom"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner"; // Using Sonner
 
 function Happen() {
+
+    const [session, setSession] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const getSession = async () => {
+            const { data, error } = await supabase.auth.getSession();
+            if (error) console.error(error);
+            setSession(data.session);
+        };
+
+        getSession();
+    }, []);
+
+    const handleJoinClick = () => {
+        if (session) {
+            toast.success("You are already a sWerver. Great choice!");
+        } else {
+            navigate("/Login");
+        }
+    };
+
+
     return (
         <section className="happen p-5 xl:pl-50 xl:pr-50">
             <h1 className="max-sm:text-3xl sm:text-3xl lg:text-5xl font-[600] leading-none">Make it all happen with sWerve</h1>
@@ -33,7 +61,12 @@ function Happen() {
                 </div>
             </div>
             <div className="flex justify-center pt-5">
-                <Button className="">Join Now</Button>
+                <Button
+                    onClick={handleJoinClick}
+                    className="font-[700] mt-5 hover:bg-[#1FCAA2] cursor-pointer"
+                >
+                    Join sWerve
+                </Button>
             </div>
         </section>
     )
