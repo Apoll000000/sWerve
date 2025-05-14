@@ -300,8 +300,6 @@ function App() {
         <Route path="/searchresults" element={<SearchDisplay />} />
 
         <Route path="*" element={<NotFound />} />
-        {/* <Route path="/about" element={<About />} />
-        <Route path="*" element={<NotFound />} /> */}
       </Routes>
 
     </>
