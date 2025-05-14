@@ -6,22 +6,22 @@ import {
 
 } from "lucide-react"
 import { Button } from "./ui/button"
-import { Link } from "react-router-dom"
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner"; // Using Sonner
+import { Session } from "@supabase/supabase-js";
 
 function Happen() {
 
-    const [session, setSession] = useState(null);
+    const [session, setSession] = useState<Session | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         const getSession = async () => {
             const { data, error } = await supabase.auth.getSession();
             if (error) console.error(error);
-            setSession(data.session);
+            setSession(data.session); // TypeScript knows data.session is of type Session | null
         };
 
         getSession();

@@ -19,56 +19,28 @@ function Popular() {
                     className="w-full mt-3"
                 >
                     <CarouselContent>
-                        <CarouselItem className="max-sm:basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-                            <div className="">
+                        {[
+                            "/1.png",
+                            "/2.png",
+                            "/3.png",
+                            "/4.png",
+                            "/5.png",
+                        ].map((src, index) => (
+                            <CarouselItem
+                                key={index}
+                                className="max-sm:basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5 hover:cursor-pointer"
+                            >
                                 <Card className="p-0">
-                                    <CardContent className="flex items-center justify-center p-6 bg-[#ff4500] rounded-lg max-sm:h-[250px] sm:h-[250px] md:h-[280px] xl:h-[20vw]">
-                                        <span className="text-3xl font-semibold">1</span>
+                                    <CardContent className="p-0 bg-[#ff4500] rounded-lg max-sm:h-[250px] sm:h-[250px] md:h-[280px] xl:h-[20vw] overflow-hidden">
+                                        <img
+                                            src={src}
+                                            alt={`Popular service ${index + 1}`}
+                                            className="w-full h-full object-cover"
+                                        />
                                     </CardContent>
                                 </Card>
-                            </div>
-                        </CarouselItem>
-
-                        <CarouselItem className="max-sm:basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-                            <div className="">
-                                <Card className="p-0">
-                                    <CardContent className="flex items-center justify-center p-6 bg-[#ff4500] rounded-lg max-sm:h-[250px] sm:h-[250px] md:h-[280px] xl:h-[20vw]">
-                                        <span className="text-3xl font-semibold">2</span>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </CarouselItem>
-
-                        <CarouselItem className="max-sm:basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-                            <div className="">
-                                <Card className="p-0">
-                                    <CardContent className="flex items-center justify-center p-6 bg-[#ff4500] rounded-lg max-sm:h-[250px] sm:h-[250px] md:h-[280px] xl:h-[20vw]">
-                                        <span className="text-3xl font-semibold">3</span>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </CarouselItem>
-
-                        <CarouselItem className="max-sm:basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-                            <div className="">
-                                <Card className="p-0">
-                                    <CardContent className="flex items-center justify-center p-6 bg-[#ff4500] rounded-lg max-sm:h-[250px] sm:h-[250px] md:h-[280px] xl:h-[20vw]">
-                                        <span className="text-3xl font-semibold">4</span>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </CarouselItem>
-
-                        <CarouselItem className="max-sm:basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-                            <div className="">
-                                <Card className="p-0">
-                                    <CardContent className="flex items-center justify-center p-6 bg-[#ff4500] rounded-lg max-sm:h-[250px] sm:h-[250px] md:h-[280px] xl:h-[20vw]">
-                                        <span className="text-3xl font-semibold">5</span>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        </CarouselItem>
-
+                            </CarouselItem>
+                        ))}
                     </CarouselContent>
                     <CarouselPrevious />
                     <CarouselNext />

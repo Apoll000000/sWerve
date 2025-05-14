@@ -36,41 +36,28 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-const services = [
-    {
-        thumbnail: "test url",
-        service_title: "Freelance Photography",
-        service_id: "INV001",
-        activeStatus: "Paid",
-        totalSales: "200",
-        revenue: "Php30,000",
-    },
-    {
-        thumbnail: "test url",
-        service_title: "Freelance Photography",
-        service_id: "INV001",
-        activeStatus: "Paid",
-        totalSales: "200",
-        revenue: "Php30,000",
-    },
-]
-
 interface ProfileData {
     full_name: string;
     username: string;
     email: string;
     address_primary: string;
+    avatar_url?: string;
+    language_primary?: string;
+    created_at?: string;
 }
 
 import { toast } from "sonner";
 
 
+interface ProfileProps {
+    session: Session | null;
+}
 
 
+const Profile: React.FC<ProfileProps> = ({ session }) => {
 
-const Profile = ({ session }) => {
+    const [data, setData] = useState<ProfileData | null>(null);
 
-    const [data, setData] = useState();
     const [joinedDate, setJoinedDate] = useState<string>("");
     const [selectedLanguage, setSelectedLanguage] = useState<string>("English");
     const [uploading, setUploading] = useState(false);
@@ -85,10 +72,15 @@ const Profile = ({ session }) => {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!session) {
+            toast.error("User is not authenticated.");
+            return;
+          }
+
         const { full_name, username, email, address_primary } = profdata;
 
         // Assuming "profiles" table exists with columns (full_name, username, email, address_primary, primary_language)
-        const { data: updatedData, error } = await supabase
+        const { error } = await supabase
             .from('profiles')
             .upsert([
                 {
@@ -122,6 +114,11 @@ const Profile = ({ session }) => {
         if (!file) return;
 
         setUploading(true);
+
+        if (!session) {
+            toast.error("User is not authenticated.");
+            return;
+          }
 
         const userId = session.user.id;
         const fileExt = file.name.split('.').pop();
@@ -180,7 +177,7 @@ const Profile = ({ session }) => {
     // Format date as "Month Year"
     function formatDate(timestamp: string) {
         const date = new Date(timestamp);
-        const options = { year: 'numeric', month: 'long' };
+        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long' };
         return date.toLocaleDateString('en-US', options);
     }
 

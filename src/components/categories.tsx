@@ -15,7 +15,6 @@ import {
 
 } from "lucide-react"
 
-import { Routes, Route, Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 

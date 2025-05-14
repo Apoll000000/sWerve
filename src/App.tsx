@@ -20,8 +20,6 @@ import {
 import {
   Cloud,
   CreditCard,
-  Github,
-  Keyboard,
   LifeBuoy,
   LogOut,
   Mail,
@@ -34,11 +32,6 @@ import {
   Users,
   ShoppingBag,
   SearchIcon,
-  FacebookIcon,
-  InstagramIcon,
-  LinkedinIcon,
-  XIcon,
-  GithubIcon,
   SquareUserRound
 } from "lucide-react"
 
@@ -50,7 +43,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -67,16 +59,22 @@ import CategoryPage from './components/CategoryPage';
 import Dashboard from './components/Dashboard';
 import GeneralPage from './components/GeneralPage';
 
+interface UserData {
+  avatar_url: string;
+  full_name: string;
+  username: string;
+  address_primary: string;
+  language_primary: string;
+}
 
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
-  const [data, setData] = useState();
-  const [joinedDate, setJoinedDate] = useState<string>("");
+  const [data, setData] = useState<UserData | null>(null);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (query.trim()) {
       navigate(`/searchresults?term=${encodeURIComponent(query.trim())}`);

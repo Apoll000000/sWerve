@@ -2,19 +2,8 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
-import {
-    Card,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-
 import { Star, History } from "lucide-react";
 import { Button } from "@/components/ui/button"
-
-
-import { Badge } from "@/components/ui/badge"
 
 import { Separator } from "@/components/ui/separator"
 
@@ -23,15 +12,33 @@ import {
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
-    BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+
+type Profile = {
+    full_name: string;
+    avatar_url: string;
+};
+
+type Service = {
+    category: string;
+    service_id: string;
+    service_name: string;
+    service_description: string;
+    thumbnail_url: string;
+    pricing_type: string;
+    rate_price: number;
+    contract_price: number;
+    delivered_in: number;
+    profiles: Profile;
+};
 
 
 const ServicePage = () => {
 
     const { id } = useParams(); // this is service_id from the URL
-    const [service, setService] = useState(null);
+    const [service, setService] = useState<Service | null>(null);
+
 
     useEffect(() => {
         async function fetchService() {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const images = [
     "https://schoolforfreelancers.com/wp-content/uploads/2023/10/young-woman-freelancer-working-in-a-coffeehouse-u-2023-06-07-17-57-09-utc.jpg",

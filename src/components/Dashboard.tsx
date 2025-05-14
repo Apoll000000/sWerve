@@ -33,26 +33,6 @@ import { Textarea } from "@/components/ui/textarea"
 
 import { toast } from "sonner";
 
-
-const services = [
-    {
-        thumbnail: "test url",
-        service_title: "Freelance Photography",
-        service_id: "INV001",
-        activeStatus: "Paid",
-        totalSales: "200",
-        revenue: "Php30,000",
-    },
-    {
-        thumbnail: "test url",
-        service_title: "Freelance Photography",
-        service_id: "INV001",
-        activeStatus: "Paid",
-        totalSales: "200",
-        revenue: "Php30,000",
-    },
-]
-
 import {
     Dialog,
     DialogContent,
@@ -75,7 +55,6 @@ import {
 
 import {
     AlertDialog,
-    AlertDialogTrigger,
     AlertDialogContent,
     AlertDialogHeader,
     AlertDialogFooter,
@@ -106,12 +85,25 @@ type Service = {
     revenue: number;
 };
 
+interface UserData {
+    avatar_url: string;
+    full_name: string;
+    username: string;
+    address_primary: string;
+    language_primary: string;
+}
 
-const Dashboard = ({ session }) => {
+interface ProfileProps {
+    session: Session | null;
+}
+
+
+
+const Dashboard: React.FC<ProfileProps> = ({ session }) => {
 
     const [pricingType, setPricingType] = useState("contract");
-    const [serviceToDelete, setServiceToDelete] = useState(null);
-    const [data, setData] = useState();
+    const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null);
+    const [data, setData] = useState<UserData | null>(null);
     const [services, setServices] = useState<Service[]>([]);
     const [joinedDate, setJoinedDate] = useState<string>("");
     const [selectedCategory, setSelectedCategory] = useState<string>("General");
@@ -135,7 +127,12 @@ const Dashboard = ({ session }) => {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const { service_name, service_description, rate_price, contract_price } = servicedata;
+        if (!session) {
+            toast.error("User is not authenticated.");
+            return;
+        }
+
+        const { service_name, service_description } = servicedata;
         const deliveredInValue = pricingType === "rate" ? 1 : servicedata.delivered_in;
         const rateValue = pricingType === "contract" ? 0 : servicedata.rate_price;
         const contractValue = pricingType === "rate" ? 0 : servicedata.contract_price;
@@ -163,17 +160,15 @@ const Dashboard = ({ session }) => {
             }
 
             // Get public URL
-            const { data: urlData, error: urlError } = supabase
+            const { data: urlData } = supabase
                 .storage
                 .from('services')
                 .getPublicUrl(filePath);
 
-            if (urlError) {
-                console.error('Error getting public URL:', urlError.message);
-                toast.error("Failed to get thumbnail url. Please try again.");
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
+            if (!urlData || !urlData.publicUrl) {
+                console.error('Error getting public URL');
+                toast.error("Failed to get thumbnail URL. Please try again.");
+                setTimeout(() => window.location.reload(), 1500);
                 return;
             }
 
@@ -223,7 +218,7 @@ const Dashboard = ({ session }) => {
     // Format date as "Month Year"
     function formatDate(timestamp: string) {
         const date = new Date(timestamp);
-        const options = { year: 'numeric', month: 'long' };
+        const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long' };
         return date.toLocaleDateString('en-US', options);
     }
 
@@ -290,7 +285,7 @@ const Dashboard = ({ session }) => {
         getServices();
     }, [session]);
 
-    const handleDelete = async (serviceId) => {
+    const handleDelete = async (serviceId: string) => {
         const { error } = await supabase
             .from("services")
             .delete()
@@ -423,7 +418,10 @@ const Dashboard = ({ session }) => {
                                                 id="contract_price"
                                                 type="number"
                                                 value={pricingType === "rate" ? 0 : servicedata.contract_price}
-                                                onChange={(e) => setserviceData({ ...servicedata, contract_price: e.target.value })}
+                                                onChange={(e) => setserviceData({
+                                                    ...servicedata,
+                                                    contract_price: pricingType !== "contract" ? servicedata.contract_price : parseFloat(e.target.value)
+                                                })}
                                                 className="col-span-3"
                                                 required={pricingType === "contract"}
                                                 disabled={pricingType !== "contract"}
@@ -437,7 +435,10 @@ const Dashboard = ({ session }) => {
                                                 id="rate_price"
                                                 type="number"
                                                 value={pricingType === "contract" ? 0 : servicedata.rate_price}
-                                                onChange={(e) => setserviceData({ ...servicedata, rate_price: e.target.value })}
+                                                onChange={(e) => setserviceData({
+                                                    ...servicedata,
+                                                    rate_price: pricingType !== "rate" ? servicedata.rate_price : parseFloat(e.target.value)
+                                                })}
                                                 className="col-span-3"
                                                 required={pricingType === "rate"}
                                                 disabled={pricingType !== "rate"}
@@ -500,7 +501,11 @@ const Dashboard = ({ session }) => {
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDelete(serviceToDelete.service_id)}>
+                                    <AlertDialogAction onClick={() => {
+                                        if (serviceToDelete !== null) {
+                                            handleDelete(serviceToDelete.service_id);
+                                        }
+                                    }}>
                                         Yes, delete it
                                     </AlertDialogAction>
                                 </AlertDialogFooter>

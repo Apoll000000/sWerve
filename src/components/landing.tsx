@@ -1,4 +1,3 @@
-import * as React from "react"
 import '../styles/Landing.css'
 import Carousel from "./ui/carouselCustom"
 import Categories from "./categories"
