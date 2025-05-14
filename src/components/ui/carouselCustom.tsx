@@ -6,23 +6,24 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner"; // Using Sonner
+import { Session } from "@supabase/supabase-js";
 
 function Carousel() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<Session | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) console.error(error);
-      setSession(data.session);
-    };
+        const getSession = async () => {
+            const { data, error } = await supabase.auth.getSession();
+            if (error) console.error(error);
+            setSession(data.session); // TypeScript knows data.session is of type Session | null
+        };
 
-    getSession();
-  }, []);
+        getSession();
+    }, []);
 
   const handleJoinClick = () => {
     if (session) {
@@ -48,8 +49,6 @@ function Carousel() {
     return () => clearInterval(autoplay); // Cleanup on unmount
   }, [emblaApi]);
 
-  const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
-  const scrollNext = () => emblaApi && emblaApi.scrollNext();
   const scrollTo = (index: number) => emblaApi && emblaApi.scrollTo(index);
 
   return (
