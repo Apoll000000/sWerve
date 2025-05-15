@@ -74,24 +74,6 @@ function App() {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
-      useEffect(() => {
-  const getSession = async () => {
-    const { data } = await supabase.auth.getSession()
-    setSession(data.session)
-  }
-
-  getSession()
-
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-    setSession(newSession)
-    hasFetchedProfile.current = false
-  })
-
-  return () => {
-    subscription.unsubscribe()
-  }
-}, [])
-
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (query.trim()) {
@@ -117,9 +99,26 @@ function App() {
 //   }
 // }, [])
 
+  useEffect(() => {
+  const getSession = async () => {
+    const { data } = await supabase.auth.getSession()
+    setSession(data.session)
+  }
+
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    setSession(newSession)
+    hasFetchedProfile.current = false
+  })
+
+  return () => {
+    subscription.unsubscribe()
+  }
+}, [])
+
   const hasFetchedProfile = useRef(false);
 
 async function getProfile() {
+  getSession();
   hasFetchedProfile.current = true;
 
   if (!session) return;
