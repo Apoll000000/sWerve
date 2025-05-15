@@ -74,7 +74,7 @@ function App() {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
-    useEffect(() => {
+      useEffect(() => {
   const getSession = async () => {
     const { data } = await supabase.auth.getSession()
     setSession(data.session)
@@ -87,7 +87,9 @@ function App() {
     hasFetchedProfile.current = false
   })
 
-  return ();
+  return () => {
+    subscription.unsubscribe()
+  }
 }, [])
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
