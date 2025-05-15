@@ -1,30 +1,30 @@
 // src/pages/AuthCallback.tsx
-import { useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
-import { useNavigate } from 'react-router-dom'
+// import { useEffect } from 'react'
+// import { supabase } from '@/lib/supabase'
+// import { useNavigate } from 'react-router-dom'
 
-const AuthCallback = () => {
-  const navigate = useNavigate()
+// const AuthCallback = () => {
+//   const navigate = useNavigate()
 
-  useEffect(() => {
-    const handleRedirect = async () => {
-      const { data, error } = await supabase.auth.getSession()
-      if (error) {
-        console.error('Error handling auth redirect:', error)
-      } else {
-        console.log('Session from URL:', data.session)
-      }
+//   useEffect(() => {
+//     const handleRedirect = async () => {
+//       const { data, error } = await supabase.auth.getSession()
+//       if (error) {
+//         console.error('Error handling auth redirect:', error)
+//       } else {
+//         console.log('Session from URL:', data.session)
+//       }
 
-      navigate('/home') // redirect to your app home or dashboard
-    }
+//       navigate('/home') // redirect to your app home or dashboard
+//     }
 
-    handleRedirect()
-  }, [navigate])
+//     handleRedirect()
+//   }, [navigate])
 
-  return <div>Logging you in...</div>
-}
+//   return <div>Logging you in...</div>
+// }
 
-export default AuthCallback
+// export default AuthCallback
 
 // src/pages/AuthCallback.tsx
 // import { useEffect } from 'react'
@@ -60,6 +60,40 @@ export default AuthCallback
 
 //   return <div>Logging you in...</div>;
 // };
+
+import { useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
+import { useNavigate } from 'react-router-dom'
+
+const AuthCallback = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleAuthRedirect = async () => {
+      // 🔑 REQUIRED: Parse the access token from the URL hash
+      const { data, error } = await supabase.auth.getSessionFromUrl();
+
+      if (error) {
+        console.error('Error handling auth callback:', error.message);
+      } else {
+        console.log('Session retrieved from URL:', data.session);
+
+        // Optional: Clear URL hash to keep it clean
+        window.location.hash = '';
+      }
+
+      // ✅ Navigate regardless to avoid reprocessing URL
+      navigate('/home');
+    };
+
+    handleAuthRedirect();
+  }, [navigate]);
+
+  return <div>Logging you in...</div>;
+};
+
+export default AuthCallback;
+
 
 // export default AuthCallback;
 
