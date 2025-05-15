@@ -74,27 +74,21 @@ function App() {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Fetch session on load
-    const getSession = async () => {
-      const { data } = await supabase.auth.getSession()
-      setSession(data.session)
-    }
+    useEffect(() => {
+  const getSession = async () => {
+    const { data } = await supabase.auth.getSession()
+    setSession(data.session)
+  }
 
-    getSession()
+  getSession()
 
-    // Listen for auth changes
-    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
-    if (newSession?.access_token !== session?.access_token) {
-      setSession(newSession);
-      hasFetchedProfile.current = false;
-    }
-  });
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    setSession(newSession)
+    hasFetchedProfile.current = false
+  })
 
-  // return () => {
-  //   subscription.unsubscribe(); // ✅ correct now
-  // };
-}, []);
+  return ();
+}, [])
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
