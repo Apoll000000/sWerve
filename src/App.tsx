@@ -99,11 +99,18 @@ function App() {
 //   }
 // }, [])
 
+  
+
+  const hasFetchedProfile = useRef(false);
+
+async function getProfile() {
   useEffect(() => {
   const getSession = async () => {
     const { data } = await supabase.auth.getSession()
     setSession(data.session)
   }
+
+     getSession();
 
   const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
     setSession(newSession)
@@ -114,11 +121,7 @@ function App() {
     subscription.unsubscribe()
   }
 }, [])
-
-  const hasFetchedProfile = useRef(false);
-
-async function getProfile() {
-  getSession();
+ 
   hasFetchedProfile.current = true;
 
   if (!session) return;
