@@ -106,9 +106,7 @@ function App() {
   const hasFetchedProfile = useRef(false);
 
 async function getProfile() {
-  if (!session || hasFetchedProfile.current) return;
-
-  hasFetchedProfile.current = true; // prevent multiple fetches
+  hasFetchedProfile.current = true;
 
   const userId = session.user.id;
   const { data, error } = await supabase
@@ -122,14 +120,14 @@ async function getProfile() {
     return;
   }
 
-  console.log("Profile data:", data);
   setData(data);
 }
 
-  // Call the function to fetch the profile
   useEffect(() => {
+  if (session && !hasFetchedProfile.current) {
     getProfile();
-  }, [session]);
+  }
+}, [session]);
 
   return (
     <>
