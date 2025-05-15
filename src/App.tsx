@@ -91,7 +91,7 @@ function App() {
     getSession()
 
     // Listen for auth changes
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
     if (newSession?.access_token !== session?.access_token) {
       setSession(newSession);
       hasFetchedProfile.current = false;
@@ -99,7 +99,7 @@ function App() {
   });
 
   return () => {
-    subscription?.unsubscribe();
+    subscription.unsubscribe(); // ✅ correct now
   };
 }, []);
 
