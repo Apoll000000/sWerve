@@ -8,7 +8,6 @@ import { supabase } from './lib/supabase';
 import ServicePage from './components/ServicePage';
 import SearchDisplay from './components/SearchDisplay';
 import { Toaster } from 'sonner';
-import { SessionProvider } from '@/SessionContext';
 import { useSession } from '@/SessionContext';
 
 import { useNavigate } from "react-router-dom";
@@ -289,10 +288,8 @@ async function getProfile() {
       <Toaster richColors position="top-center" />
 
 
- <SessionProvider>
       <Routes>
-    <Route path="/" element={<Navigate to="/home" />} />
-
+        <Route path="/" element={<Navigate to="/home" />} />
         <Route path="/home" element={<Landingpage />} />
         <Route path="/Login" element={<LoginForm />} />
         <Route path="/general" element={<GeneralPage />} />
@@ -303,12 +300,9 @@ async function getProfile() {
         <Route path="/services" element={<GeneralPage />} />
         <Route path="/services/:id" element={<ServicePage />} />
         <Route path="/searchresults" element={<SearchDisplay />} />
-
         <Route path="*" element={<NotFound />} />
-
-        
       </Routes>
-     </SessionProvider>
+
 
     </>
   )
