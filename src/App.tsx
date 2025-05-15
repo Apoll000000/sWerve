@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button"
@@ -91,16 +91,17 @@ function App() {
     getSession()
 
     // Listen for auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
-  if (newSession?.access_token !== session?.access_token) {
-    setSession(newSession);
-    hasFetchedProfile.current = false; // Reset to allow profile refetch
-  }
-});
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    if (newSession?.access_token !== session?.access_token) {
+      setSession(newSession);
+      hasFetchedProfile.current = false;
+    }
+  });
 
-
-    return () => subscription.unsubscribe()
-  }, [])
+  return () => {
+    subscription?.unsubscribe();
+  };
+}, []);
 
   const hasFetchedProfile = useRef(false);
 
