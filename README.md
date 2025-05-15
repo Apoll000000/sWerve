@@ -1,54 +1,126 @@
-# React + TypeScript + Vite
+# sWerve PH
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Avail Services with Ease — sWerve PH is your go-to platform for discovering, booking, and managing services conveniently in the Philippines.**
 
-Currently, two official plugins are available:
+## 🚀 Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 [[https://swerve-teal.vercel.app](https://swerve-teal.vercel.app/))
 
-## Expanding the ESLint configuration
+> ⚠️ Note: Google login works locally. Production login requires correct Supabase OAuth setup and domain whitelisting.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 📆 Tech Stack
+
+* ⚛️ **React** + **TypeScript**
+* ⚡️ **Vite** — lightning-fast frontend tooling
+* 💅 **shadcn/ui** — accessible, stylish components
+* 🌬 **Tailwind CSS** — utility-first styling
+* 🔐 **Supabase** — authentication, database, and storage
+* ☁️ **Vercel** — fast and easy deployment
+
+---
+
+## ✅ Features
+
+* 🔐 Google Sign-In via Supabase (local setup working)
+* 🛙 Product creation and deletion
+* ✏️ Edit profile picture and user details
+* 🔍 Real-time item search
+* 🧱 Category filter functionality
+* 🚪 Log out functionality
+* Pagination
+
+---
+
+## 🔧 Local Development Setup
+
+1. **Clone the repository**
+
+   ```bash
+   git clone [https://github.com/yourusername/swerve-ph.git
+   cd swerve-ph](https://github.com/Apoll000000/sWerve.git)
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Check environment variables**
+
+   Create a `.env.local` file:
+
+   ```env
+   VITE_SUPABASE_URL=https://hnwlbmmhsusegprhqvpr.supabase.co
+   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhud2xibW1oc3VzZWdwcmhxdnByIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0NzQ2OTAsImV4cCI6MjA2MDA1MDY5MH0.LjnDvLXEcdoUlehRDxQ6WgLbnslCieW29bYxjO2MXsM
+   ```
+
+4. **Run the app**
+
+   ```bash
+   npm run dev
+   ```
+
+---
+## 📁 Project Structure
+
+```
+public                # Images and static files
+src/
+├── components/       # Reusable UI components
+     ├── ui/          # shadcn reusables
+├── lib/              # Supabase client, helpers
+├── App.tsx           # Root app structure
+└── main.tsx          # Vite entry point
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🔍 SEO & Meta Tags
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Set in `index.html`:
+
+* Title: `sWerve PH | Avail Services with Ease`
+* Meta description & keywords
+* Open Graph (social media sharing) tags
+* Favicon
+
+---
+
+## 🧹 UI Notes
+
+* Uses **shadcn/ui** components styled with **Tailwind CSS**
+* Includes a responsive **carousel** (coming soon or already included)
+* Fonts powered by **Google Fonts (Nunito Sans)**
+
+---
+
+## 🛠 To-Do / Roadmap
+
+* ✅ Search, category filters
+* ✅ Profile editing
+* 📋 Service bookings
+* 💬 In-app messaging
+* ⭐️ Ratings & reviews
+* 🔒 Supabase role-based access control
+
+---
+
+## 🤝 Contributing
+
+Feel free to submit issues, create pull requests, or suggest features!
+
+---
+
+## 📄 License
+
+[MIT](LICENSE)
+
+---
+
+## 📬 Contact
+
+* **sWerve PH Team**
+* Email: leonenpatrickpaul@gmail.com
