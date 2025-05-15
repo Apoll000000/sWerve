@@ -8,10 +8,12 @@ import { SessionProvider } from '@/SessionContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <SessionProvider>
+    
       <BrowserRouter>
+        <SessionProvider>
          <App />
+          </SessionProvider>
       </BrowserRouter>
-   </SessionProvider>
+   
   </StrictMode>
 )
