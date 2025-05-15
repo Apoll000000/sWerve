@@ -289,9 +289,8 @@ async function getProfile() {
       <Toaster richColors position="top-center" />
 
 
-
+ <SessionProvider>
       <Routes>
-        <SessionProvider>
     <Route path="/" element={<Navigate to="/home" />} />
 
         <Route path="/home" element={<Landingpage />} />
@@ -306,9 +305,10 @@ async function getProfile() {
         <Route path="/searchresults" element={<SearchDisplay />} />
 
         <Route path="*" element={<NotFound />} />
-  </SessionProvider>
+
         
       </Routes>
+     </SessionProvider>
 
     </>
   )
