@@ -9,6 +9,7 @@ import ServicePage from './components/ServicePage';
 import SearchDisplay from './components/SearchDisplay';
 import { Toaster } from 'sonner';
 import { SessionProvider } from '@/SessionContext';
+import { useSession } from '@/SessionContext';
 
 import { useNavigate } from "react-router-dom";
 
@@ -70,7 +71,11 @@ interface UserData {
 
 
 function App() {
-  const [session, setSession] = useState<Session | null>(null);
+  const { session, loading } = useSession();
+
+  if (loading) return <p>Loading...</p>;
+  
+  // const [session, setSession] = useState<Session | null>(null);
   const [data, setData] = useState<UserData | null>(null);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
@@ -82,23 +87,25 @@ function App() {
     }
   };
 
-  useEffect(() => {
-  const getSession = async () => {
-    const { data } = await supabase.auth.getSession()
-    setSession(data.session)
-  }
+//   useEffect(() => {
+//   const getSession = async () => {
+//     const { data } = await supabase.auth.getSession()
+//     setSession(data.session)
+//   }
 
-  getSession()
+//   getSession()
 
-  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
-    setSession(newSession)
-    hasFetchedProfile.current = false
-  })
+//   const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+//     setSession(newSession)
+//     hasFetchedProfile.current = false
+//   })
 
-  return () => {
-    subscription.unsubscribe()
-  }
-}, [])
+//   return () => {
+//     subscription.unsubscribe()
+//   }
+// }, [])
+
+  
 
   
 
