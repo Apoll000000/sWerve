@@ -72,8 +72,6 @@ interface UserData {
 
 function App() {
   const { session, loading } = useSession();
-
-  if (loading) return <p>Loading...</p>;
   
   // const [session, setSession] = useState<Session | null>(null);
   const [data, setData] = useState<UserData | null>(null);
