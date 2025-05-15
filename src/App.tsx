@@ -108,6 +108,8 @@ function App() {
 async function getProfile() {
   hasFetchedProfile.current = true;
 
+  if (!session) return;
+
   const userId = session.user.id;
   const { data, error } = await supabase
     .from('profiles')
