@@ -91,40 +91,39 @@ function App() {
     getSession()
 
     // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession)
-    })
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+  if (newSession?.access_token !== session?.access_token) {
+    setSession(newSession);
+    hasFetchedProfile.current = false; // Reset to allow profile refetch
+  }
+});
+
 
     return () => subscription.unsubscribe()
   }, [])
 
-  async function getProfile() {
+  const hasFetchedProfile = useRef(false);
 
-    if (session) {
-      // Extract the user ID from the session metadata
-      const userId = session.user.id;
+async function getProfile() {
+  if (!session || hasFetchedProfile.current) return;
 
-      // Query the `profiles` table to get the profile based on the user ID
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId) // Assuming user_id is the foreign key in the `profiles` table
-        .single(); // Assuming there is only one profile per user
+  hasFetchedProfile.current = true; // prevent multiple fetches
 
-      if (error) {
-        console.error("Error fetching profile:", error);
-        return;
-      }
+  const userId = session.user.id;
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
 
-      console.log("Profile data:", data);
-      setData(data); // This is the user's profile
-    } else {
-      console.log('User is not logged in.');
-      return null;
-    }
+  if (error) {
+    console.error("Error fetching profile:", error);
+    return;
   }
+
+  console.log("Profile data:", data);
+  setData(data);
+}
 
   // Call the function to fetch the profile
   useEffect(() => {
