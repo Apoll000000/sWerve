@@ -71,7 +71,7 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthRedirect = async () => {
       // 🔑 REQUIRED: Parse the access token from the URL hash
-      const { data, error } = await supabase.auth.getSessionFromUrl();
+      const { data, error } = await supabase.auth.getSession();
 
       if (error) {
         console.error('Error handling auth callback:', error.message);
