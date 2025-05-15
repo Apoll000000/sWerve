@@ -84,7 +84,7 @@ function App() {
     getSession()
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
     if (newSession?.access_token !== session?.access_token) {
       setSession(newSession);
       hasFetchedProfile.current = false;
